@@ -16,6 +16,7 @@ SIGNATURE_TRIGGERS = [
     "Ben",
     "Ritesh",
     "Thabani",
+    "Frank"
 ]
 
 def strip_signature(body, triggers=SIGNATURE_TRIGGERS):

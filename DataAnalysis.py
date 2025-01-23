@@ -1,4 +1,3 @@
-# warehouse_parser.py
 import re
 from collections import defaultdict
 from typing import List, Dict, Any
@@ -15,22 +14,25 @@ def parse_emails(email_data: List[Dict[str, Any]]) -> Dict[str, Any]:
     # return: A dictionary with aggregated counts per item category and a list of unparsable lines.
     
     # Define lists for desktop, laptop, and phone models for flexibility and future tuning if needed
-    DESKTOP_MODELS = ["3000", "3010"]  
-    LAPTOP_MODELS = ["5340", "5330", "5531", "5540", "5666"]  
-    PHONE_MODELS = ["A32", "A34", "A35", "S23"]  
-    
+    DESKTOP_MODELS = ["3000", "3010","3080","7010"]  
+    LAPTOP_MODELS = ["5300", "5310", "5320", "5330", "5340", "7300", "5511", "5521", "5531", "5540"]  
+    PHONE_MODELS = ["A35"]  
+
     # DATA STRUCTURES FOR FINAL COUNTS
     
-    counts = {
-        'monitors': 0,                       
+    counts = {                      
         'desktops': defaultdict(int),        
         'laptops': defaultdict(int),         
-        'phones': defaultdict(int),          
-        'bags': defaultdict(int),            
-        'chargers': defaultdict(int),        
-        'docks': 0,                          
-        'headsets': defaultdict(int),        
+        'phones': defaultdict(int),  
 
+        'headsets': defaultdict(int),
+        'bags': defaultdict(int),            
+        'chargers': defaultdict(int), 
+
+        'car charger': 0, 
+        'docks': 0,                          
+        'monitors': 0,
+        
         'unparsable_lines': []               
     }
 
@@ -52,7 +54,6 @@ def parse_emails(email_data: List[Dict[str, Any]]) -> Dict[str, Any]:
 
     def increment_phone(model: str, count: int):
         #Add phones by model (e.g., A32, A34, A35). If model not given or unrecognized, default to A35.
-        
         if model not in PHONE_MODELS:
             model = 'A35'  # default per requirement
         counts['phones'][model] += count
@@ -72,6 +73,10 @@ def parse_emails(email_data: List[Dict[str, Any]]) -> Dict[str, Any]:
     def increment_charger(label: str, count: int):
         #Add charger counts 
         counts['chargers'][label] += count
+
+    def increment_car_charger(label: str, count: int):
+        #Add charger counts 
+        counts['car charger'][label] += count
 
     def increment_dock(count: int):
         #Add docking station / dock count.
@@ -209,6 +214,12 @@ def parse_emails(email_data: List[Dict[str, Any]]) -> Dict[str, Any]:
                         increment_charger(item_str_normalized, count_num)
                         parsed = True
                         continue 
+                    # Check for car chargers
+                    if 'car charger' in item_str_normalized:
+                        increment_car_charger(item_str_normalized, count_num)
+                        parsed = True
+                        continue 
+
                     # Check for dock/docking station
                     if 'dock' in item_str_normalized:
                         increment_dock(count_num)
