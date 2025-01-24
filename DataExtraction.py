@@ -40,10 +40,13 @@ def read_outlook_subfolder_stores(mailbox_display_name, subfolder_name):
         raise ValueError(f"Mailbox '{mailbox_display_name}' not found in Outlook Stores.")
     
     inbox = target_store.GetDefaultFolder(6)
-    try:
-        subfolder = inbox.Folders[subfolder_name]
-    except:
-        raise ValueError(f"Subfolder '{subfolder_name}' not found under Inbox for '{mailbox_display_name}'.")
+    if subfolder_name != "Inbox":
+        try:
+            subfolder = inbox.Folders[subfolder_name]
+        except:
+            raise ValueError(f"Subfolder '{subfolder_name}' not found under Inbox for '{mailbox_display_name}'.")
+    else:
+        subfolder = inbox
 
     messages = subfolder.Items
     messages.Sort("[ReceivedTime]", True)
